@@ -58,11 +58,11 @@ jobs:
     - name: Run Build and Multi-Thread Architecture Checks
       # Pass the matrix variable directly into uv's context loop 
       run: |
-        uv run --python "${{ matrix.python-version }}" python -c "import sys; print('GIL status (False = Free-Threaded):', sys._is_gil_enabled())"
-        uv run --python "${{ matrix.python-version }}" uv build
+        python -c "import sys; print('GIL status (False = Free-Threaded):', sys._is_gil_enabled())"
+        uv build
 
     - name: Run tests
-      run: uv run --python "${{ matrix.python-version }}-arm64" pytest tests
+      run: uv run pytest tests
         
     - name: Upload Dynamic Matrix Artifacts
       uses: actions/upload-artifact@v4
