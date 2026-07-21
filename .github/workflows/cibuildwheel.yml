@@ -43,7 +43,11 @@ jobs:
 
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.22.0  # Runs all Python targets in sequence on this host
-      
+      env:
+        CIBW_BUILD: "cp312-* cp313-* cp313t-* cp314-* cp314t-* cp315-*"
+        CIBW_PRERELEASE_PYTHONS: "1"
+        CIBW_ENABLE: "cpython_freethreading"
+        
     - name: Upload wheels as artifacts
       uses: actions/upload-artifact@v4
       with:
