@@ -73,7 +73,7 @@ jobs:
     # Dynamically updates [tool.scikit-build.wheel] py-api configuration
     - name: Update py-api in pyproject.toml
       run: |
-        uvx --from toml-cli toml.exe set pyproject.toml tool.scikit-build.wheel.py-api "${{ matrix.py-api }}"
+        uvx --from toml-cli toml.exe set --toml-path pyproject.toml tool.scikit-build.wheel.py-api "${{ matrix.py-api }}"
 
     - name: Run Build and Multi-Thread Architecture Checks
       # Pass the matrix variable directly into uv's context loop 
@@ -90,7 +90,32 @@ jobs:
         name: wheels-PyVEX-unofficial-${{ matrix.python-version }}
         path: dist/
         if-no-files-found: error
-        
+  
+  # STEP 2: Unified Release Creation (Executes after ALL matrix items finish successfully)
+  release:
+    name: Create GitHub Release
+    needs: build-windows-arm64
+    runs-on: ubuntu-latest
+    #permissions:
+      #contents: write # Essential permission to create releases and upload files
+    steps:
+      - uses: actions/checkout@v4
+
+      # Downloads all artifacts prefixed with 'wheels-' into a single local folder called 'dist'
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true # Flattens them all into the root of the 'dist' folder
+
+      # Creates the release and attaches all matching files found in the dist directory
+      #- name: Publish GitHub Release
+      #  uses: ncipollo/release-action@v1
+      #  with:
+      #    artifacts: "dist/*.whl"
+      #    generateReleaseNotes: true # Automatically generates standard release notes
+          
   test:
     name: Test
     if: false
