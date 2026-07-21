@@ -21,6 +21,10 @@ jobs:
       fail-fast: false
       matrix:      
         include:
+        
+          - python-version: "3.12"
+            py-api: "cp312"
+            
           - python-version: "3.13"
             py-api: "cp313"
             
@@ -69,7 +73,7 @@ jobs:
     # Dynamically updates [tool.scikit-build.wheel] py-api configuration
     - name: Update py-api in pyproject.toml
       run: |
-        uvx toml-cli set pyproject.toml tool.scikit-build.wheel.py-api "${{ matrix.py-api }}"
+        uvx --from toml-cli toml.exe set pyproject.toml tool.scikit-build.wheel.py-api "${{ matrix.py-api }}"
 
     - name: Run Build and Multi-Thread Architecture Checks
       # Pass the matrix variable directly into uv's context loop 
@@ -83,7 +87,7 @@ jobs:
     - name: Upload Dynamic Matrix Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: PyVEX-unofficial-${{ matrix.python-version }}
+        name: wheels-PyVEX-unofficial-${{ matrix.python-version }}
         path: dist/
         if-no-files-found: error
         
