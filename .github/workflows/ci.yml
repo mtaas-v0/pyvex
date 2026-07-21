@@ -32,7 +32,8 @@ jobs:
 
     - name: Ensure Native Windows ARM64 Python
       # Installs the precise native arm64 interpreter required for compiling
-      run: uv python install --preview 3.14 --arch arm64
+      run: uv python install --preview 3.14
+      # cannot accept --arch arm64
 
     - name: Setup MSVC Compiler Dev Cmd (Compiled Extensions Only)
       # Only uncomment this step if your project contains C/C++ extensions
