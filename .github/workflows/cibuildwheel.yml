@@ -48,7 +48,7 @@ jobs:
         CIBW_PRERELEASE_PYTHONS: "1"
         CIBW_ENABLE: "cpython-freethreading"
         #  CIBW_ENABLE: "cpython-prerelease"  # Use a hyphen    
-        CIBW_FREE_THREADED_SUPPORT: 1
+        # CIBW_FREE_THREADED_SUPPORT: 1 #they changed that again
         #cpython_freethreading not an optin
         #cpython-freethreading   also not
         #pypa/cibuildwheel@v4.1.0 cannot handle cp313t-*
