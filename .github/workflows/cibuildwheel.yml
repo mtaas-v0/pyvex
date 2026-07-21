@@ -46,7 +46,7 @@ jobs:
       env:
         CIBW_BUILD: "cp312-* cp313-* cp313t-* cp314-* cp314t-* cp315-*"
         CIBW_PRERELEASE_PYTHONS: "1"
-        CIBW_ENABLE: "cpython-prerelease cpython_freethreading"
+        CIBW_ENABLE: "cpython-prerelease cpython-freethreading"  # Use a hyphen
         #cpython_freethreading not an optin
         
     - name: Upload wheels as artifacts
