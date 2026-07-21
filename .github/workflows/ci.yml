@@ -19,15 +19,26 @@ jobs:
     strategy:
       # Keep true failures isolated so experimental builds don't block stable ones
       fail-fast: false
-      matrix:
-        python-version:
-          - "3.12"         # Stable baseline
-          - "3.13"         # Standard Python 3.13
-          - "3.13t"        # 3.13 Free-Threaded (experimental GIL-disabled)
-          - "3.14"         # Standard Python 3.14 (GIL enabled)
-          - "3.14t"        # 3.14 Free-Threaded (fully integrated GIL-disabled)
-          - "3.15"     # Alpha nightly standard 
-          - "3.15t"    # Alpha nightly Free-Threaded
+      matrix:      
+        include:
+          - python-version: "3.13"
+            py-api: "cp313"
+            
+          - python-version: "3.13t"
+            py-api: "cp313t"
+            
+          - python-version: "3.14"
+            py-api: "cp314"
+            
+          - python-version: "3.14t"
+            py-api: "cp314t"
+            
+          - python-version: "3.15"
+            py-api: "cp315"
+            
+          - python-version: "3.15t"
+            py-api: "cp315t"
+            
     env:
       # Explicitly force uv to target the Windows arm64 Python architecture
       UV_PYTHON_PREFERENCE: only-managed
@@ -54,7 +65,12 @@ jobs:
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: arm64
-        
+    
+    # Dynamically updates [tool.scikit-build.wheel] py-api configuration
+    - name: Update py-api in pyproject.toml
+      run: |
+        uv x toml-cli set pyproject.toml tool.scikit-build.wheel.py-api "${{ matrix.py-api }}"
+
     - name: Run Build and Multi-Thread Architecture Checks
       # Pass the matrix variable directly into uv's context loop 
       run: |
