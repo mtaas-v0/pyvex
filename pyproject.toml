@@ -62,8 +62,33 @@ exclude = [
   "tests*"
 ]
 
+#[tool.scikit-build.wheel]
+#py-api = "cp312"
+
+[tool.cibuildwheel]
+# Expanded version matrix target definitions
+build = [
+  "cp312-*", 
+  "cp313-*", "cp313t-*", 
+  "cp314-*", "cp314t-*", 
+  "cp315-*"
+]
+
+# Explicit feature activations needed to download and boot these versions
+enable = ["cpython-prerelease"] #"cpython-freethreading", 
+
+test-requires = ["pytest"]
+test-command = "pytest {project}/tests"
+
 [tool.scikit-build.wheel]
+# Standard Baseline: Force a single universal stable-abi wheel for 3.12+ 
 py-api = "cp312"
+
+[[tool.scikit-build.overrides]]
+# Dynamic Matrix Interceptor: Catches BOTH cp313t and cp314t / cp315t automatically
+if.abi-flags = ".*t.*"
+# Drops the stable-abi fallback completely so it compiles cleanly for no-GIL runtimes
+wheel.py-api = ""
 
 [tool.scikit-build.metadata.version]
 provider = "scikit_build_core.metadata.regex"
