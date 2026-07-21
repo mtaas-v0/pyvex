@@ -46,7 +46,8 @@ jobs:
       env:
         CIBW_BUILD: "cp313-* cp313t-*"
         CIBW_PRERELEASE_PYTHONS: "1"
-        CIBW_ENABLE: "cpython-prerelease"  # Use a hyphen    
+        CIBW_ENABLE: "cpython-freethreading"
+        #  CIBW_ENABLE: "cpython-prerelease"  # Use a hyphen    
         CIBW_FREE_THREADED_SUPPORT: 1
         #cpython_freethreading not an optin
         #cpython-freethreading   also not
