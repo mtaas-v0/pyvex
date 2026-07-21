@@ -69,7 +69,8 @@ jobs:
     # Dynamically updates [tool.scikit-build.wheel] py-api configuration
     - name: Update py-api in pyproject.toml
       run: |
-        uv x toml-cli set pyproject.toml tool.scikit-build.wheel.py-api "${{ matrix.py-api }}"
+        uv tool install toml-cli
+        toml-cli set pyproject.toml tool.scikit-build.wheel.py-api "${{ matrix.py-api }}"
 
     - name: Run Build and Multi-Thread Architecture Checks
       # Pass the matrix variable directly into uv's context loop 
