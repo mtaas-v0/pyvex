@@ -44,7 +44,10 @@ jobs:
     - name: Build wheels
       uses: pypa/cibuildwheel@v3.4.0  # Use the real, available release version # Runs all Python targets in sequence on this host
       env:
-        CIBW_BUILD: "cp313-* cp313t-*"
+        CIBW_BUILD: "cp313-*"
+        # no  cp313t-*: RuntimeError: CFFI does not support the free-threaded build of CPython
+        #3.13. Upgrade to free-threaded 3.14 or newer to use CFFI with the free-
+        #threaded build.
         CIBW_PRERELEASE_PYTHONS: "1"
         CIBW_ENABLE: "cpython-freethreading"
         #  CIBW_ENABLE: "cpython-prerelease"  # Use a hyphen    
