@@ -15,7 +15,12 @@ jobs:
     name: Test
     strategy:
       matrix:
-        os: [windows-2022, macos-15-intel, macos-15, ubuntu-24.04]
+        os: 
+#          - macos-15-intel
+#          - macos-15
+#          - ubuntu-24.04
+          - windows-11-arm
+          - windows-2022
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -33,3 +38,12 @@ jobs:
       - name: Run tests
         run: uv run pytest tests
 
+      - name: Build wheel and source distribution
+        run: uv build
+  
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-packages
+          path: dist/
+          if-no-files-found: error
