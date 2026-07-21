@@ -1,0 +1,54 @@
+name: CI using 
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ecosystem:
+    if: false
+    uses: angr/ci-settings/.github/workflows/angr-ci.yml@master
+
+  build-windows-arm64:
+    # Native GitHub-hosted Windows ARM64 runner label
+    name: Build PyVEX on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Keep true failures isolated so experimental builds don't block stable ones
+      fail-fast: false
+      matrix:
+        os:
+          - windows-11-arm
+#          - windows-2022
+    env:
+      # Explicitly force uv to target the Windows arm64 Python architecture
+      UV_PYTHON_PREFERENCE: only-managed
+      UV_PYTHON: arm64
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        # Options: true (one level), recursive (all levels), or false (default)
+        submodules: recursive
+
+    - name: Setup MSVC Compiler Dev Cmd (Compiled Extensions Only)
+      # Only uncomment this step if your project contains C/C++ extensions
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: arm64
+
+    - name: Build wheels
+      uses: pypa/cibuildwheel@v2.22.0  # Runs all Python targets in sequence on this host
+      
+    - name: Upload wheels as artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        # Give the artifact a distinct name combining the OS and unique workflow run ID
+        name: cibw-wheels-PyVEX-unofficial-${{ matrix.os }}-${{ github.run_id }}
+        # Path where cibuildwheel outputs the compiled .whl files
+        path: ./wheelhouse/*.whl
+        if-no-files-found: error
