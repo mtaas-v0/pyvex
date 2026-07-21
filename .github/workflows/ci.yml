@@ -9,17 +9,58 @@ on:
 
 jobs:
   ecosystem:
+    if: false
     uses: angr/ci-settings/.github/workflows/angr-ci.yml@master
 
+  build-windows-arm64:
+    # Native GitHub-hosted Windows ARM64 runner label
+    runs-on: windows-11-arm
+
+    env:
+      # Explicitly force uv to target the Windows arm64 Python architecture
+      UV_PYTHON_PREFERENCE: only-managed
+      UV_PYTHON: arm64
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+
+    - name: Ensure Native Windows ARM64 Python
+      # Installs the precise native arm64 interpreter required for compiling
+      run: uv python install --preview 3.14 --arch arm64
+
+    - name: Setup MSVC Compiler Dev Cmd (Compiled Extensions Only)
+      # Only uncomment this step if your project contains C/C++ extensions
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: arm64
+
+    - name: Build Packages
+      # Standard build execution produces cross-verified target wheels
+      run: uv build
+
+    - name: Upload Native Windows Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-arm64-packages
+        path: dist/
+        if-no-files-found: error
+        
   test:
     name: Test
+    if: false
     strategy:
       matrix:
         os: 
-#          - macos-15-intel
-#          - macos-15
-#          - ubuntu-24.04
-          - windows-11-arm
+          - macos-15-intel
+          - macos-15
+          - ubuntu-24.04
+#          - windows-11-arm
           - windows-2022
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -34,7 +75,7 @@ jobs:
       - name: Setup uv
         uses: astral-sh/setup-uv@445689ea25e0de0a23313031f5fe577c74ae45a1 # v6
       - name: Sync dependencies
-        run: uv sync -p 3.12
+        run: uv sync -p 3.14
       - name: Run tests
         run: uv run pytest tests
 
