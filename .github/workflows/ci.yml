@@ -24,7 +24,9 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
-
+      with:
+        # Options: true (one level), recursive (all levels), or false (default)
+        submodules: recursive
     - name: Set up uv
       uses: astral-sh/setup-uv@v5
       with:
