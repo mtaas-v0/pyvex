@@ -57,7 +57,7 @@ jobs:
 
     - name: Ensure Native Windows ARM64 Python
       # Installs the precise native arm64 interpreter required for compiling
-      run: uv python install "${{ matrix.python-version }}" --preview
+      run: uv python install "cpython-${{ matrix.python-version }}-windows-aarch64-none" --preview
       # cannot accept --arch arm64
 
     - name: Setup MSVC Compiler Dev Cmd (Compiled Extensions Only)
@@ -69,17 +69,16 @@ jobs:
     # Dynamically updates [tool.scikit-build.wheel] py-api configuration
     - name: Update py-api in pyproject.toml
       run: |
-        uv tool install toml-cli
-        toml-cli set pyproject.toml tool.scikit-build.wheel.py-api "${{ matrix.py-api }}"
+        uvx toml-cli set pyproject.toml tool.scikit-build.wheel.py-api "${{ matrix.py-api }}"
 
     - name: Run Build and Multi-Thread Architecture Checks
       # Pass the matrix variable directly into uv's context loop 
       run: |
         python -c "import sys; print('GIL status (False = Free-Threaded):', sys._is_gil_enabled())"
-        uv build
+        uv build --python "cpython-${{ matrix.python-version }}-windows-aarch64-none" 
 
     - name: Run tests
-      run: uv run pytest tests
+      run: uv run --python "cpython-${{ matrix.python-version }}-windows-aarch64-none"  pytest tests
         
     - name: Upload Dynamic Matrix Artifacts
       uses: actions/upload-artifact@v4
