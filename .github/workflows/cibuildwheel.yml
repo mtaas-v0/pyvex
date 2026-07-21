@@ -42,11 +42,12 @@ jobs:
         arch: arm64
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.22.0  # Runs all Python targets in sequence on this host
+      uses: pypa/cibuildwheel@v3.4.1 # Runs all Python targets in sequence on this host
       env:
         CIBW_BUILD: "cp312-* cp313-* cp313t-* cp314-* cp314t-* cp315-*"
         CIBW_PRERELEASE_PYTHONS: "1"
-        CIBW_ENABLE: "cpython_freethreading"
+        CIBW_ENABLE: "cpython-prerelease cpython_freethreading"
+        #cpython_freethreading not an optin
         
     - name: Upload wheels as artifacts
       uses: actions/upload-artifact@v4
